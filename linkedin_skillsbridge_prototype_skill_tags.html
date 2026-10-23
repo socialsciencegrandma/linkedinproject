@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn SkillsBridge - Personalized Career Growth Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        linkedin: {
+                            primary: '#0A66C2',
+                            legacy: '#0077B5',
+                            accent: '#00A0DC',
+                            dark: '#313335',
+                            bg: '#F4F2EE',
+                            border: '#E0E0E0',
+                            hover: '#004182',
+                            lightBg: '#F3F6F8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #F4F2EE;
+            color: #181818;
+        }
+        .card-shadow {
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .sketch-border {
+            border: 2px dashed #0A66C2;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #CBD5E1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 1. LINKEDIN TOP HEADER BAR -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+            
+            <!-- Left: Logo & Search -->
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center text-linkedin-primary font-bold text-2xl tracking-tight">
+                    <i class="fa-brands fa-linkedin text-3xl mr-1.5"></i>
+                    <span class="hidden sm:inline">LinkedIn</span>
+                </div>
+                <span class="bg-linkedin-primary text-white text-xs font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                    <i class="fa-solid fa-bridge text-[10px]"></i> SkillsBridge
+                </span>
+                
+                <!-- Search Mockup -->
+                <div class="hidden md:flex items-center bg-linkedin-lightBg rounded px-3 py-1.5 text-sm border border-transparent focus-within:border-gray-400 w-64 ml-2">
+                    <i class="fa-solid fa-magnifying-glass text-gray-500 mr-2 text-xs"></i>
+                    <input type="text" placeholder="Search skills, jobs, courses..." class="bg-transparent border-none outline-none w-full text-xs text-gray-700">
+                </div>
+            </div>
+
+            <!-- Middle: Main App View Navigation (Updated Toggle) -->
+            <nav class="flex items-center space-x-2 text-sm font-bold bg-gray-100 p-1 rounded-full">
+                <button onclick="switchView('dashboard')" id="nav-dashboard" class="px-4 py-1.5 rounded-full text-linkedin-primary bg-white shadow-sm transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-user"></i>
+                    <span class="hidden sm:inline">Jobseeker View</span>
+                </button>
+                <button onclick="switchView('recruiter')" id="nav-recruiter" class="px-4 py-1.5 rounded-full text-gray-600 hover:text-linkedin-primary transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span class="hidden sm:inline">Recruiter View</span>
+                </button>
+            </nav>
+
+            <!-- Right: Premium Toggle & Profile -->
+            <div class="flex items-center space-x-3">
+                <!-- Premium Switcher -->
+                <div class="flex items-center bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
+                    <span class="text-[11px] font-bold text-amber-800 mr-2 flex items-center gap-1">
+                        <i class="fa-solid fa-crown text-amber-600"></i> Premium
+                    </span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="premiumToggle" class="sr-only peer" onchange="togglePremium()">
+                        <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-600"></div>
+                    </label>
+                </div>
+
+                <!-- User snippet -->
+                <div class="flex items-center space-x-2 pl-2 border-l border-gray-200">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Profile" class="w-8 h-8 rounded-full border border-linkedin-primary">
+                    <div class="hidden xl:block text-left">
+                        <div class="text-xs font-bold text-gray-900 leading-none">Alex Chen</div>
+                        <div class="text-[10px] text-gray-500 leading-tight">Sr. PM Candidate</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- SUB-NAV / BANNER INFO -->
+    <div class="bg-linkedin-dark text-white text-xs py-2 px-4 shadow-inner">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+                <span class="bg-emerald-500 text-white font-bold text-[10px] uppercase px-1.5 py-0.5 rounded">Live Demo</span>
+                <span>Bridging the Graduate-Employment Gap with O*NET Skill Taxonomy & Psychometric Signal Verification</span>
+            </div>
+            <div class="flex items-center space-x-4 text-gray-300">
+                <span><i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i> Dimensional AI Active</span>
+                <span><i class="fa-solid fa-chart-line text-linkedin-accent mr-1"></i> Real-time Market Demand Sync</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN BODY CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
+
+        <!-- ========================================== -->
+        <!-- VIEW 1: SKILLS DEVELOPMENT DASHBOARD (SKETCH) -->
+        <!-- ========================================== -->
+        <div id="view-dashboard" class="space-y-6">
+
+            <!-- Top Header & Goal Job Selector -->
+            <div class="bg-white rounded-xl p-5 card-shadow border border-gray-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl font-bold text-gray-900">Skills Development Dashboard</h1>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Select your target goal role to analyze skill gaps, psychometric alignment, and curated featured resources.</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto">
+                    <label class="text-xs font-bold text-gray-700 whitespace-nowrap"><i class="fa-solid fa-flag-checkered text-linkedin-primary mr-1"></i> Target Goal Role:</label>
+                    <select id="goalJobSelect" onchange="changeGoalRole()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm font-semibold rounded-lg focus:ring-linkedin-primary focus:border-linkedin-primary p-2.5 w-full sm:w-72 shadow-sm">
+                        <option value="principal_pm" selected>Principal AI Product Manager</option>
+                        <option value="solutions_arch">Enterprise Solutions Architect</option>
+                        <option value="vp_growth">VP of Growth Marketing</option>
+                        <option value="lead_data_sci">Lead Data Analytics Director</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Role Stats Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                <div class="bg-white rounded-lg p-3 card-shadow flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-blue-100 text-linkedin-primary flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                    </div>
+                    <div>
+                        <div class="text-gray-500">Target Salary Range</div>
+                        <div id="targetSalary" class="font-bold text-gray-800 text-sm">$185,000 - $225,000</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-3 card-shadow flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    </div>
+                    <div>
+                        <div class="text-gray-500">Industry Market Demand</div>
+                        <div id="marketDemand" class="font-bold text-emerald-600 text-sm">High (+28% YoY Growth)</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-3 card-shadow flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <div class="text-gray-500">Dimensional Fit</div>
+                        <div id="psychFit" class="font-bold text-purple-700 text-sm">92% Psychometric Match</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-3 card-shadow flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div>
+                        <div class="text-gray-500">O*NET Standard Code</div>
+                        <div id="onetCode" class="font-bold text-gray-800 text-sm">11-9041.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD GRID: MATCHING HAND-DRAWN SKETCH EXACTLY -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- TOP CARD OF SKETCH: OVERALL PROGRESS (DONUT/PIE CHART) -->
+                <div class="lg:col-span-5 bg-white rounded-xl p-5 card-shadow border border-gray-200 flex flex-col justify-between">
+                    <div>
+                        <!-- Donut Chart Canvas Container -->
+                        <div class="relative w-48 h-48 mx-auto my-2">
+                            <canvas id="progressPieChart"></canvas>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                <span id="overallPercentage" class="text-3xl font-extrabold text-linkedin-primary">74%</span>
+                                <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Goal Match</span>
+                            </div>
+                        </div>
+
+                        <!-- Legend & Boost Breakdown -->
+                        <div class="mt-4 space-y-2 text-xs">
+                            <div class="flex justify-between items-center p-2 rounded bg-gray-50">
+                                <span class="flex items-center gap-2 font-medium text-gray-700">
+                                    <span class="w-3 h-3 rounded-full bg-linkedin-primary inline-block"></span> Verified Acquired Skills
+                                </span>
+                                <span id="acquiredCount" class="font-bold text-gray-900">4 / 5 Skills</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 rounded bg-gray-50">
+                                <span class="flex items-center gap-2 font-medium text-gray-700">
+                                    <span class="w-3 h-3 rounded-full bg-linkedin-accent inline-block"></span> Skill Gap Remaining
+                                </span>
+                                <span id="remainingPercent" class="font-bold text-gray-900">26% to Target</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dimensional Boost Banner -->
+                    <div class="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-3 text-xs text-purple-900 flex items-start gap-2.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-purple-600 text-sm mt-0.5"></i>
+                        <div>
+                            <span class="font-bold">Dimensional Psychometric Boost Applied:</span>
+                            <span class="text-purple-800"> Your strategic mindset assessment added <strong class="text-purple-900">+8% confidence score</strong> to leadership readiness.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MIDDLE CARD OF SKETCH: STACKED BAR GRAPH (REQUIRED SKILLS) -->
+                <div class="lg:col-span-7 bg-white rounded-xl p-5 card-shadow border border-gray-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b pb-3 mb-3">
+                            <div>
+                                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-bar text-linkedin-primary"></i> Stacked Skill Breakdown Graph
+                                </h2>
+                            </div>
+                            <span class="text-xs text-gray-500">Click any skill bar to filter recommendations below</span>
+                        </div>
+
+                        <p class="text-xs text-gray-600 mb-3">O*NET Skill Taxonomy matrix. Competency scale: 0–7. Primary blue shows your competency up to the role requirement; accent blue shows the remaining gap. Each bar ends at the required level. Hover for your full competency and the role requirement.</p>
+
+                        <!-- Chart Canvas Container -->
+                        <div class="relative h-64 w-full">
+                            <canvas id="skillsStackedChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Skill Quick Filter Buttons -->
+                    <div class="mt-4 pt-3 border-t border-gray-100">
+                        <div class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Interactive Skill Selection:</div>
+                        <div id="skillPillsContainer" class="flex flex-wrap gap-2">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM CARD OF SKETCH: RECOMMENDATIONS PANEL (3 CATEGORIES: LEARN, PRACTICE, CONNECT) -->
+                <div class="lg:col-span-12 bg-white rounded-xl p-6 card-shadow border border-gray-200">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between border-b pb-4 mb-4 gap-3">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span id="selectedSkillBadge" class="bg-blue-100 text-linkedin-primary text-xs font-bold px-2.5 py-0.5 rounded-full">
+                                    Showing: All Role Gaps
+                                </span>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-900 mt-1">Action Panel</h2>
+                        </div>
+
+                        <!-- 3 CATEGORY TABS (LEARN, PRACTICE, CONNECT) -->
+                        <div class="flex items-center bg-gray-100 p-1 rounded-lg border border-gray-200">
+                            <button onclick="setRecTab('ALL')" id="tab-rec-ALL" class="px-3 py-1.5 text-xs font-bold rounded-md bg-white text-linkedin-primary shadow-sm transition-all">
+                                All Categories
+                            </button>
+                            <button onclick="setRecTab('LEARN')" id="tab-rec-LEARN" class="px-3 py-1.5 text-xs font-bold rounded-md text-gray-600 hover:text-linkedin-primary transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-graduation-cap"></i> LEARN <span class="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.2 rounded-full font-extrabold">Sponsored</span>
+                            </button>
+                            <button onclick="setRecTab('PRACTICE')" id="tab-rec-PRACTICE" class="px-3 py-1.5 text-xs font-bold rounded-md text-gray-600 hover:text-linkedin-primary transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-hands-holding-child"></i> PRACTICE <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.2 rounded-full font-extrabold">CSR</span>
+                            </button>
+                            <button onclick="setRecTab('CONNECT')" id="tab-rec-CONNECT" class="px-3 py-1.5 text-xs font-bold rounded-md text-gray-600 hover:text-linkedin-primary transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-users"></i> CONNECT
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recommendation Items Grid -->
+                    <div id="recommendationsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Populated dynamically via JavaScript -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTTOM RIGHT FLOATING / FIXED CTA CARD MATCHING SKETCH -->
+            <div class="fixed bottom-5 right-5 z-40 bg-white border-2 border-linkedin-primary rounded-xl p-4 shadow-2xl max-w-sm w-full transition-transform transform hover:-translate-y-1">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs uppercase font-extrabold text-emerald-600 flex items-center gap-1">
+                        <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> Auto-Match Ready
+                    </span>
+                    <button onclick="this.parentElement.parentElement.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <h3 class="font-bold text-gray-900 text-sm mb-1">Ready for Jobs? (CTA)</h3>
+                <p class="text-xs text-gray-600 mb-3">Launch LinkedIn pre-filtered portal with automated skill-match score applied.</p>
+                
+                <button onclick="openJobModal()" class="w-full bg-linkedin-primary hover:bg-linkedin-hover text-white font-bold py-2.5 px-4 rounded-lg text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-linkedin text-lg"></i>
+                    <span>Apply with SkillsBridge Score</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: TARGET ROLE MATCHER (JOBSEEKER) -->
+        <!-- ========================================== -->
+        <div id="view-matcher" class="hidden space-y-6">
+            <div class="bg-white rounded-xl p-6 card-shadow border border-gray-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Target Role Skill Fit Matcher</h2>
+                        <p class="text-xs text-gray-500 mt-1">LinkedIn SkillsBridge compares your consolidated 360 profile against current job market listings.</p>
+                    </div>
+                    <div id="premiumBadgeMatcher" class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 text-xs text-amber-900 flex items-center gap-2">
+                        <i class="fa-solid fa-crown text-amber-600"></i>
+                        <span><strong>LinkedIn Premium Active:</strong> Direct recruiter match highlights unlocked</span>
+                    </div>
+                </div>
+
+                <!-- Roles Match Table / List -->
+                <div class="space-y-4">
+                    <!-- Role Item 1 -->
+                    <div class="border rounded-xl p-4 hover:border-linkedin-primary transition-all bg-white card-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-gray-900 text-base">Principal AI Product Manager</h3>
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded">74% Fit Match</span>
+                                <span class="bg-blue-50 text-linkedin-primary text-xs font-semibold px-2 py-0.5 rounded border border-blue-200">Current Goal</span>
+                            </div>
+                            <p class="text-xs text-gray-600">Strongest alignment in Product Strategy (88%) & User Centric Research (82%). Skill gap in MLOps Governance.</p>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <span class="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded"><i class="fa-solid fa-check text-emerald-600 mr-1"></i> O*NET 11-9041</span>
+                                <span class="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded"><i class="fa-solid fa-briefcase mr-1"></i> 1,420 Active Openings</span>
+                                <span class="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded"><i class="fa-solid fa-chart-line mr-1"></i> +28% YoY Growth</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+                            <button onclick="setGoalAndSwitch('principal_pm')" class="w-full sm:w-auto bg-linkedin-primary text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-linkedin-hover">
+                                View Dashboard Gap
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Role Item 2 -->
+                    <div class="border rounded-xl p-4 hover:border-linkedin-primary transition-all bg-white card-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-gray-900 text-base">Enterprise Solutions Architect</h3>
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded">81% Fit Match</span>
+                            </div>
+                            <p class="text-xs text-gray-600">High technical cloud system score (90%). Minor development required in Stakeholder Mgmt.</p>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <span class="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded"><i class="fa-solid fa-check text-emerald-600 mr-1"></i> O*NET 15-1252</span>
+                                <span class="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded"><i class="fa-solid fa-briefcase mr-1"></i> 2,890 Active Openings</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+                            <button onclick="setGoalAndSwitch('solutions_arch')" class="w-full sm:w-auto bg-linkedin-primary text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-linkedin-hover">
+                                Set as Goal Role
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Role Item 3 -->
+                    <div class="border rounded-xl p-4 hover:border-linkedin-primary transition-all bg-white card-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-gray-900 text-base">VP of Growth Marketing</h3>
+                                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">62% Fit Match</span>
+                            </div>
+                            <p class="text-xs text-gray-600">Data analytics background transfers well. Requires rapid upskilling in Paid Media Scaling.</p>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <span class="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded"><i class="fa-solid fa-check text-emerald-600 mr-1"></i> O*NET 11-2021</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+                            <button onclick="setGoalAndSwitch('vp_growth')" class="w-full sm:w-auto bg-linkedin-primary text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-linkedin-hover">
+                                Set as Goal Role
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: CANDIDATE OUTREACH (RECRUITER VIEW)-->
+        <!-- ========================================== -->
+        <div id="view-recruiter" class="hidden space-y-6">
+            <div class="bg-white rounded-xl p-6 card-shadow border border-gray-200">
+                <!-- Header & Search/Filter -->
+                <div class="border-b border-gray-200 pb-5 mb-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Candidate Outreach Dashboard</h2>
+                        <p class="text-xs text-gray-500 mt-1">Discover candidates based on verified skills and non-traditional signals, beyond traditional degrees.</p>
+                    </div>
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <div class="relative w-full md:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" value="AI Product Manager" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-linkedin-primary focus:border-linkedin-primary pl-9 p-2.5 font-semibold" readonly>
+                        </div>
+                        <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-semibold border border-gray-300 flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-sliders"></i> Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Candidate Cards List -->
+                <div class="space-y-5">
+                    
+                    <!-- Candidate 1 -->
+                    <div class="border border-gray-200 rounded-xl p-5 hover:border-linkedin-primary hover:shadow-lg transition-all bg-white card-shadow flex flex-col xl:flex-row gap-6 group">
+                        <!-- Left: Profile & Match Score -->
+                        <div class="flex flex-col items-center xl:items-start xl:w-1/4 space-y-4 border-b xl:border-b-0 xl:border-r border-gray-100 pb-4 xl:pb-0 xl:pr-4">
+                            <div class="flex items-center gap-4 w-full">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" class="w-16 h-16 rounded-full border-2 border-emerald-500 object-cover p-0.5">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900 leading-tight">Alex Chen</h3>
+                                    <p class="text-xs text-gray-600">Senior Product Manager</p>
+                                    <p class="text-[10px] text-gray-400 mt-0.5">San Francisco, CA</p>
+                                </div>
+                            </div>
+                            <div class="bg-emerald-50 border border-emerald-200 w-full rounded-xl p-3 text-center relative overflow-hidden">
+                                <div class="absolute inset-0 bg-emerald-100 opacity-20 group-hover:scale-110 transition-transform duration-500"></div>
+                                <div class="text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider mb-1 relative z-10">SkillsBridge Match</div>
+                                <div class="text-3xl font-black text-emerald-600 relative z-10">94%</div>
+                            </div>
+                        </div>
+
+                        <!-- Middle: Skills & Signals -->
+                        <div class="xl:w-2/4 space-y-5 flex flex-col justify-center">
+                            <div>
+                                <h4 class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2.5">Top O*NET Aggregated Skills</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-blue-50 text-linkedin-primary border border-blue-200 text-xs font-semibold px-2.5 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-blue-100 transition-colors cursor-default">
+                                        <i class="fa-solid fa-check-circle text-blue-400"></i> Product Strategy (95%)
+                                    </span>
+                                    <span class="bg-blue-50 text-linkedin-primary border border-blue-200 text-xs font-semibold px-2.5 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-blue-100 transition-colors cursor-default">
+                                        <i class="fa-solid fa-check-circle text-blue-400"></i> Cloud Architecture (88%)
+                                    </span>
+                                    <span class="bg-blue-50 text-linkedin-primary border border-blue-200 text-xs font-semibold px-2.5 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-blue-100 transition-colors cursor-default">
+                                        <i class="fa-solid fa-check-circle text-blue-400"></i> Machine Learning (90%)
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2.5">Non-Traditional Signals Powering Score</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                    <div class="flex items-start gap-2.5 text-xs">
+                                        <div class="bg-purple-100 text-purple-600 p-1.5 rounded-md mt-0.5"><i class="fa-solid fa-brain"></i></div>
+                                        <div>
+                                            <strong class="block text-gray-800">Psychometric Fit</strong>
+                                            <span class="text-gray-600">High Cognitive Adaptability (Powered by Dimensional)</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2.5 text-xs">
+                                        <div class="bg-emerald-100 text-emerald-600 p-1.5 rounded-md mt-0.5"><i class="fa-solid fa-hands-holding-child"></i></div>
+                                        <div>
+                                            <strong class="block text-gray-800">Volunteer Leadership</strong>
+                                            <span class="text-gray-600">TechSoup AI Readiness Mentor</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2.5 text-xs sm:col-span-2 border-t border-gray-200 pt-3 mt-1">
+                                        <div class="bg-amber-100 text-amber-600 p-1.5 rounded-md mt-0.5"><i class="fa-solid fa-diagram-project"></i></div>
+                                        <div>
+                                            <strong class="block text-gray-800">Project-based Assessments</strong>
+                                            <span class="text-gray-600">42 Network C Piscine (Passed Top 5%), AWS Solutions Architect (Verified Lab Completion)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Actions -->
+                        <div class="xl:w-1/4 flex flex-col justify-center gap-3 border-t xl:border-t-0 xl:border-l border-gray-100 pt-5 xl:pt-0 xl:pl-5">
+                            <button onclick="alert('Frictionless Outreach: Draft InMail Opened with skills context pre-populated for Alex Chen!')" class="w-full bg-linkedin-primary hover:bg-linkedin-hover text-white font-bold py-3 px-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 active:scale-95">
+                                <i class="fa-brands fa-linkedin-in"></i> Send InMail
+                            </button>
+                            <button class="w-full bg-white hover:bg-gray-50 text-linkedin-primary border-2 border-linkedin-primary font-bold py-2.5 px-4 rounded-full text-sm transition-all flex items-center justify-center gap-2 active:scale-95">
+                                <i class="fa-regular fa-bookmark"></i> Save to Pipeline
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Candidate 2 -->
+                    <div class="border border-gray-200 rounded-xl p-5 hover:border-linkedin-primary hover:shadow-lg transition-all bg-white card-shadow flex flex-col xl:flex-row gap-6 group">
+                        <!-- Left: Profile & Match Score -->
+                        <div class="flex flex-col items-center xl:items-start xl:w-1/4 space-y-4 border-b xl:border-b-0 xl:border-r border-gray-100 pb-4 xl:pb-0 xl:pr-4">
+                            <div class="flex items-center gap-4 w-full">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80" class="w-16 h-16 rounded-full border-2 border-emerald-500 object-cover p-0.5">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900 leading-tight">Marcus Johnson</h3>
+                                    <p class="text-xs text-gray-600">Data Science Lead</p>
+                                    <p class="text-[10px] text-gray-400 mt-0.5">Remote, US</p>
+                                </div>
+                            </div>
+                            <div class="bg-emerald-50 border border-emerald-200 w-full rounded-xl p-3 text-center relative overflow-hidden">
+                                <div class="absolute inset-0 bg-emerald-100 opacity-20 group-hover:scale-110 transition-transform duration-500"></div>
+                                <div class="text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider mb-1 relative z-10">SkillsBridge Match</div>
+                                <div class="text-3xl font-black text-emerald-600 relative z-10">89%</div>
+                            </div>
+                        </div>
+
+                        <!-- Middle: Skills & Signals -->
+                        <div class="xl:w-2/4 space-y-5 flex flex-col justify-center">
+                            <div>
+                                <h4 class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2.5">Top O*NET Aggregated Skills</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-blue-50 text-linkedin-primary border border-blue-200 text-xs font-semibold px-2.5 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-blue-100 transition-colors cursor-default">
+                                        <i class="fa-solid fa-check-circle text-blue-400"></i> Data Analytics (98%)
+                                    </span>
+                                    <span class="bg-blue-50 text-linkedin-primary border border-blue-200 text-xs font-semibold px-2.5 py-1.5 rounded-full flex items-center gap-1.5 hover:bg-blue-100 transition-colors cursor-default">
+                                        <i class="fa-solid fa-check-circle text-blue-400"></i> User Centric Research (82%)
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2.5">Non-Traditional Signals Powering Score</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                    <div class="flex items-start gap-2.5 text-xs">
+                                        <div class="bg-purple-100 text-purple-600 p-1.5 rounded-md mt-0.5"><i class="fa-solid fa-brain"></i></div>
+                                        <div>
+                                            <strong class="block text-gray-800">Psychometric Fit</strong>
+                                            <span class="text-gray-600">Analytical & Methodical (Powered by Dimensional)</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2.5 text-xs">
+                                        <div class="bg-amber-100 text-amber-600 p-1.5 rounded-md mt-0.5"><i class="fa-solid fa-diagram-project"></i></div>
+                                        <div>
+                                            <strong class="block text-gray-800">Project-based Assessments</strong>
+                                            <span class="text-gray-600">Kaggle Grandmaster, Open Source Contributions (React/Python)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Actions -->
+                        <div class="xl:w-1/4 flex flex-col justify-center gap-3 border-t xl:border-t-0 xl:border-l border-gray-100 pt-5 xl:pt-0 xl:pl-5">
+                            <button onclick="alert('Frictionless Outreach: Draft InMail Opened with skills context pre-populated for Marcus Johnson!')" class="w-full bg-linkedin-primary hover:bg-linkedin-hover text-white font-bold py-3 px-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 active:scale-95">
+                                <i class="fa-brands fa-linkedin-in"></i> Send InMail
+                            </button>
+                            <button class="w-full bg-white hover:bg-gray-50 text-linkedin-primary border-2 border-linkedin-primary font-bold py-2.5 px-4 rounded-full text-sm transition-all flex items-center justify-center gap-2 active:scale-95">
+                                <i class="fa-regular fa-bookmark"></i> Save to Pipeline
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- VIEW 4: DIMENSIONAL PSYCHOMETRIC SYNC -->
+        <!-- ========================================== -->
+        <div id="view-dimensional" class="hidden space-y-6">
+            <div class="bg-white rounded-xl p-6 card-shadow border border-gray-200">
+                <div class="flex items-center justify-between border-b pb-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-600 text-white font-black text-xl flex items-center justify-center">
+                            D
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900">Dimensional Integration Sync</h2>
+                            <p class="text-xs text-gray-500">Partnering with Dimensional to bring AI-backed psychometric capability modeling to LinkedIn SkillsBridge.</p>
+                        </div>
+                    </div>
+                    <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">
+                        <i class="fa-solid fa-arrows-rotate mr-1 animate-spin"></i> Sync Active
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-purple-50 rounded-xl p-5 border border-purple-200">
+                        <h3 class="font-bold text-purple-900 text-sm mb-2"><i class="fa-solid fa-shield-halved mr-1"></i> Cognitive Adaptability</h3>
+                        <div class="text-2xl font-extrabold text-purple-800 mb-1">94th Percentile</div>
+                        <p class="text-xs text-purple-900">Demonstrates rapid learning capacity in shifting tech environments (AI/ML workflows).</p>
+                    </div>
+
+                    <div class="bg-purple-50 rounded-xl p-5 border border-purple-200">
+                        <h3 class="font-bold text-purple-900 text-sm mb-2"><i class="fa-solid fa-people-roof mr-1"></i> Stakeholder Influence</h3>
+                        <div class="text-2xl font-extrabold text-purple-800 mb-1">High Synergy</div>
+                        <p class="text-xs text-purple-900">Matches cross-functional executive alignment demands of Principal Product roles.</p>
+                    </div>
+
+                    <div class="bg-purple-50 rounded-xl p-5 border border-purple-200">
+                        <h3 class="font-bold text-purple-900 text-sm mb-2"><i class="fa-solid fa-chart-line mr-1"></i> Role Matching Confidence</h3>
+                        <div class="text-2xl font-extrabold text-purple-800 mb-1">+8% Boost Factor</div>
+                        <p class="text-xs text-purple-900">Calculated directly into the top progress Donut chart score on your main dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SIMULATED LINKEDIN JOB PORTAL MODAL -->
+    <div id="jobModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col card-shadow">
+            
+            <!-- Modal Header -->
+            <div class="bg-linkedin-primary text-white p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-brands fa-linkedin text-2xl"></i>
+                    <div>
+                        <h3 class="font-bold text-base">LinkedIn Pre-Filtered Jobs Portal</h3>
+                        <p class="text-[11px] text-blue-100">Automated filter applied: <span id="modalJobTitleTag" class="underline font-semibold">Principal AI Product Manager</span></p>
+                    </div>
+                </div>
+                <button onclick="closeJobModal()" class="text-white hover:text-gray-200 text-xl font-bold p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
+                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-lg text-xs text-emerald-900 flex items-center justify-between">
+                    <span><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <strong>SkillsBridge Match Enabled:</strong> Your candidate score profile is attached automatically to all 1-Click Easy Apply requests.</span>
+                    <span class="bg-emerald-600 text-white font-extrabold px-2 py-0.5 rounded text-[10px]">74% Score</span>
+                </div>
+
+                <!-- Job Listing Item 1 -->
+                <div class="border border-gray-200 rounded-xl p-4 hover:border-linkedin-primary transition-all space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-base">Lead / Principal AI Product Manager</h4>
+                            <p class="text-xs font-semibold text-linkedin-primary">Global Tech Enterprise • San Francisco, CA (Hybrid)</p>
+                        </div>
+                        <span class="bg-blue-100 text-linkedin-primary font-bold text-xs px-2.5 py-1 rounded-full">92% Match Fit</span>
+                    </div>
+                    <p class="text-xs text-gray-600">Leading generative AI workflow products across enterprise clients. Requires Product Strategy and MLOps familiarization.</p>
+                    <div class="flex items-center justify-between pt-2">
+                        <span class="text-xs font-bold text-gray-700">$190,000 - $220,000 / yr</span>
+                        <button onclick="alert('Application Submitted via LinkedIn SkillsBridge! Your 360-skill score has been sent directly to the hiring manager.')" class="bg-linkedin-primary text-white font-bold text-xs px-4 py-2 rounded-lg hover:bg-linkedin-hover">
+                            1-Click Easy Apply
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Job Listing Item 2 -->
+                <div class="border border-gray-200 rounded-xl p-4 hover:border-linkedin-primary transition-all space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-base">Senior AI Platform Owner</h4>
+                            <p class="text-xs font-semibold text-linkedin-primary">ScaleUp AI Labs • Remote</p>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 font-bold text-xs px-2.5 py-1 rounded-full">85% Match Fit</span>
+                    </div>
+                    <p class="text-xs text-gray-600">Cross-functional execution across data analytics and user research teams.</p>
+                    <div class="flex items-center justify-between pt-2">
+                        <span class="text-xs font-bold text-gray-700">$175,000 - $205,000 / yr</span>
+                        <button onclick="alert('Application Submitted via LinkedIn SkillsBridge!')" class="bg-linkedin-primary text-white font-bold text-xs px-4 py-2 rounded-lg hover:bg-linkedin-hover">
+                            1-Click Easy Apply
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 border-t border-gray-200 p-4 flex justify-between items-center text-xs">
+                <span class="text-gray-500">Showing 2 top matched openings for your skill taxonomy</span>
+                <button onclick="closeJobModal()" class="px-4 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300">
+                    Close Window
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & CHART.JS ENGINE -->
+    <script>
+        // ==========================================
+        // DATA STRUCTURE FOR GOAL ROLES & SKILLS
+        // ==========================================
+        const roleData = {
+            principal_pm: {
+                title: "Principal AI Product Manager",
+                salary: "$185,000 - $225,000",
+                demand: "High (+28% YoY Growth)",
+                psychFit: "92% Psychometric Match",
+                onet: "11-9041.00",
+                overallScore: 74,
+                acquiredCount: "4 / 5 Skills",
+                remainingGap: "26% to Target",
+                skills: [
+                    { name: "Product Strategy & Roadmap", userCompetency: 6, requiredCompetency: 7 },
+                    { name: "MLOps Ops & Governance", userCompetency: 4, requiredCompetency: 3 },
+                    { name: "Data Driven Decision Making", userCompetency: 6, requiredCompetency: 6 },
+                    { name: "Stakeholder Management", userCompetency: 2, requiredCompetency: 6 },
+                    { name: "User Centric Research", userCompetency: 5, requiredCompetency: 5 }
+                ],
+                recommendations: {
+                    "Product Strategy & Roadmap": [
+                        { category: "LEARN", title: "Executive Product Strategy Specialization", provider: "Coursera / Wharton", badge: "Sponsored Partner", fee: "$49/mo", duration: "4 Weeks", gain: "+8% Strategy Score" },
+                        { category: "PRACTICE", title: "Pro-Bono Non-Profit AI Roadmap Lead", relatedSkills: ["Product Strategy & Roadmap", "Stakeholder Management"], provider: "TechSoup CSR", badge: "LinkedIn CSR", fee: "Free", duration: "10 hrs/wk", gain: "+12% Practice Signal" },
+                        { category: "CONNECT", title: "Executive PM Mentorship Circle", provider: "LinkedIn Mentor Network", badge: "Featured Mentor", fee: "Free for Premium", duration: "Bi-weekly", gain: "Peer Verification" }
+                    ],
+                    "MLOps Ops & Governance": [
+                        { category: "LEARN", title: "Enterprise MLOps & LLM Governance", provider: "Udacity Nanodegree", badge: "Featured Partner", fee: "$399", duration: "6 Weeks", gain: "+25% Tech Score" },
+                        { category: "PRACTICE", title: "Open-Source AI Safety Evaluator", relatedSkills: ["MLOps Ops & Governance", "Data Driven Decision Making"], provider: "HuggingFace Community", badge: "LinkedIn CSR Project", fee: "Free", duration: "Flexible", gain: "+15% GitHub Signal" },
+                        { category: "CONNECT", title: "AI Product Operations Summit 2026", provider: "ProductCon Global", badge: "Exclusive Pass", fee: "Sponsored Ticket", duration: "Oct 24-25", gain: "Network Boost" }
+                    ],
+                    "Data Driven Decision Making": [
+                        { category: "LEARN", title: "Advanced Product Analytics with SQL/Python", provider: "LinkedIn Learning Path", badge: "Included", fee: "Free", duration: "8 Hours", gain: "+5% Verified Badge" },
+                        { category: "PRACTICE", title: "Analytics Lead for Educational Non-Profit", relatedSkills: ["Data Driven Decision Making", "Stakeholder Management"], provider: "Code.org Volunteer", badge: "LinkedIn CSR", fee: "Free", duration: "5 hrs/wk", gain: "+10% Real Data Signal" },
+                        { category: "CONNECT", title: "Data Leadership Mastermind", provider: "LinkedIn Groups", badge: "Invite Only", fee: "Free", duration: "Monthly", gain: "Executive Endorsement" }
+                    ],
+                    "Stakeholder Management": [
+                        { category: "LEARN", title: "Cross-Functional Executive Influence", provider: "Harvard Online Exec Ed", badge: "Featured Partner", fee: "$1,200", duration: "2 Weeks", gain: "+15% Executive Fit" },
+                        { category: "PRACTICE", title: "CONNECT Board Advisory Lead", provider: "Global Giving CSR", badge: "LinkedIn CSR", fee: "Free", duration: "3 hrs/wk", gain: "+10% Leadership Signal" },
+                        { category: "CONNECT", title: "VP Product Roundtable Networking", provider: "LinkedIn Live Events", badge: "Featured Event", fee: "Free", duration: "1 Hour", gain: "Recruiter Visibility" }
+                    ],
+                    "User Centric Research": [
+                        { category: "LEARN", title: "AI User Experience Research & Testing", relatedSkills: ["User Centric Research", "Data Driven Decision Making"], provider: "NN/g Nielsen Norman Group", badge: "Sponsored", fee: "$890", duration: "3 Days", gain: "+18% UX Fit" },
+                        { category: "PRACTICE", title: "Accessibility Testing Volunteer", provider: "W3C Working Group", badge: "LinkedIn CSR", fee: "Free", duration: "Flexible", gain: "+8% Practice Signal" },
+                        { category: "CONNECT", title: "UX Leaders Guild Mentorship", provider: "ADPList / LinkedIn", badge: "Peer Mentor", fee: "Free", duration: "Monthly", gain: "Peer Verification" }
+                    ]
+                }
+            },
+            solutions_arch: {
+                title: "Enterprise Solutions Architect",
+                salary: "$195,000 - $240,000",
+                demand: "Very High (+32% YoY Growth)",
+                psychFit: "89% Psychometric Match",
+                onet: "15-1252.00",
+                overallScore: 81,
+                acquiredCount: "4 / 5 Skills",
+                remainingGap: "19% to Target",
+                skills: [
+                    { name: "Cloud System Infrastructure", userCompetency: 6, requiredCompetency: 7 },
+                    { name: "Enterprise Security Protocols", userCompetency: 6, requiredCompetency: 6 },
+                    { name: "Stakeholder Technical Pitching", userCompetency: 5, requiredCompetency: 5 },
+                    { name: "Cost Optimization & FinOps", userCompetency: 5, requiredCompetency: 5 },
+                    { name: "Microservices Architecture", userCompetency: 6, requiredCompetency: 6 }
+                ],
+                recommendations: {
+                    "Stakeholder Technical Pitching": [
+                        { category: "LEARN", title: "Technical Communication for Architects", provider: "LinkedIn Learning", badge: "Included", fee: "Free", duration: "4 Hours", gain: "+12% Communication Score" },
+                        { category: "PRACTICE", title: "Pro-bono Cloud Advisor for Startups", relatedSkills: ["Stakeholder Technical Pitching", "Cloud System Infrastructure", "Cost Optimization & FinOps"], provider: "Techstars Mentorship", badge: "LinkedIn CSR", fee: "Free", duration: "4 hrs/wk", gain: "+15% Practice Signal" },
+                        { category: "CONNECT", title: "Enterprise Architect Council", provider: "AWS User Group", badge: "Featured Network", fee: "Free", duration: "Monthly", gain: "Peer Network" }
+                    ]
+                }
+            },
+            vp_growth: {
+                title: "VP of Growth Marketing",
+                salary: "$170,000 - $210,000",
+                demand: "Moderate (+18% YoY Growth)",
+                psychFit: "84% Psychometric Match",
+                onet: "11-2021.00",
+                overallScore: 62,
+                acquiredCount: "3 / 5 Skills",
+                remainingGap: "38% to Target",
+                skills: [
+                    { name: "Growth Analytics & Attribution", userCompetency: 6, requiredCompetency: 6 },
+                    { name: "Paid Acquisition Scaling", userCompetency: 3, requiredCompetency: 7 },
+                    { name: "Retention & Lifecycle Loops", userCompetency: 5, requiredCompetency: 5 },
+                    { name: "Conversion Rate Optimization", userCompetency: 4, requiredCompetency: 6 },
+                    { name: "Brand Positioning Strategy", userCompetency: 4, requiredCompetency: 5 }
+                ],
+                recommendations: {
+                    "Paid Acquisition Scaling": [
+                        { category: "LEARN", title: "Paid Media Strategy & Performance Scaling", relatedSkills: ["Paid Acquisition Scaling", "Growth Analytics & Attribution"], provider: "Reforge Growth Series", badge: "Featured Partner", fee: "$1,495", duration: "6 Weeks", gain: "+28% Skill Gain" },
+                        { category: "PRACTICE", title: "Growth Campaign Lead for Social Impact", provider: "UNICEF Digital CSR", badge: "LinkedIn CSR", fee: "Free", duration: "5 hrs/wk", gain: "+20% Practice Signal" },
+                        { category: "CONNECT", title: "Growth Marketing Leaders Network", provider: "LinkedIn Live Series", badge: "Featured Pass", fee: "Free", duration: "Bi-weekly", gain: "Direct Recruiter Signal" }
+                    ]
+                }
+            }
+        };
+
+        // ==========================================
+        // STATE MANAGEMENT
+        // ==========================================
+        let currentRoleKey = 'principal_pm';
+        let selectedSkillKey = 'ALL';
+        let activeRecCategory = 'ALL';
+        let isPremium = false;
+
+        let pieChartInstance = null;
+        let stackedChartInstance = null;
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        window.onload = function() {
+            renderDashboardCharts();
+            renderSkillPills();
+            renderRecommendations();
+        };
+
+        // ==========================================
+        // VIEW NAVIGATION SWITCHER
+        // ==========================================
+        function switchView(viewName) {
+            const allViews = ['dashboard', 'matcher', 'recruiter', 'dimensional'];
+            
+            allViews.forEach(v => {
+                const element = document.getElementById(`view-${v}`);
+                if(element) {
+                    if (v === viewName) {
+                        element.classList.remove('hidden');
+                    } else {
+                        element.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Update Nav Button Styles
+            const navBtnDash = document.getElementById('nav-dashboard');
+            const navBtnRec = document.getElementById('nav-recruiter');
+
+            if (navBtnDash && navBtnRec) {
+                if (viewName === 'dashboard') {
+                    navBtnDash.className = "px-4 py-1.5 rounded-full text-linkedin-primary bg-white shadow-sm transition-all flex items-center gap-2";
+                    navBtnRec.className = "px-4 py-1.5 rounded-full text-gray-600 hover:text-linkedin-primary transition-all flex items-center gap-2";
+                } else if (viewName === 'recruiter') {
+                    navBtnRec.className = "px-4 py-1.5 rounded-full text-linkedin-primary bg-white shadow-sm transition-all flex items-center gap-2";
+                    navBtnDash.className = "px-4 py-1.5 rounded-full text-gray-600 hover:text-linkedin-primary transition-all flex items-center gap-2";
+                }
+            }
+        }
+
+        function setGoalAndSwitch(roleKey) {
+            document.getElementById('goalJobSelect').value = roleKey;
+            changeGoalRole();
+            switchView('dashboard');
+        }
+
+        // ==========================================
+        // PREMIUM TOGGLE LOGIC
+        // ==========================================
+        function togglePremium() {
+            isPremium = document.getElementById('premiumToggle').checked;
+            const matcherBadge = document.getElementById('premiumBadgeMatcher');
+            if (isPremium) {
+                matcherBadge.classList.remove('hidden');
+            } else {
+                matcherBadge.classList.add('hidden');
+            }
+            renderRecommendations(); // re-render to update premium perks
+        }
+
+        // ==========================================
+        // GOAL ROLE CHANGE HANDLER
+        // ==========================================
+        function changeGoalRole() {
+            currentRoleKey = document.getElementById('goalJobSelect').value;
+            const role = roleData[currentRoleKey] || roleData['principal_pm'];
+
+            // Update Header Stats
+            document.getElementById('targetSalary').innerText = role.salary;
+            document.getElementById('marketDemand').innerText = role.demand;
+            document.getElementById('psychFit').innerText = role.psychFit;
+            document.getElementById('onetCode').innerText = role.onet;
+            document.getElementById('overallPercentage').innerText = `${role.overallScore}%`;
+            document.getElementById('acquiredCount').innerText = role.acquiredCount;
+            document.getElementById('remainingPercent').innerText = role.remainingGap;
+            document.getElementById('modalJobTitleTag').innerText = role.title;
+
+            // Reset skill selector
+            selectedSkillKey = 'ALL';
+
+            // Re-render charts and panels
+            updateCharts();
+            renderSkillPills();
+            renderRecommendations();
+        }
+
+        // ==========================================
+        // CHART RENDERING (CHART.JS)
+        // ==========================================
+        function renderDashboardCharts() {
+            const role = roleData[currentRoleKey];
+
+            // 1. Donut / Pie Chart (Top Card of Sketch)
+            const ctxPie = document.getElementById('progressPieChart').getContext('2d');
+            pieChartInstance = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Acquired / Verified Skills', 'Skill Gap Remaining'],
+                    datasets: [{
+                        data: [role.overallScore, 100 - role.overallScore],
+                        backgroundColor: ['#0A66C2', '#00A0DC'],
+                        borderWidth: 2,
+                        borderColor: '#FFFFFF'
+                    }]
+                },
+                options: {
+                    cutout: '72%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Stacked Bar Chart (Middle Card of Sketch)
+            const ctxBar = document.getElementById('skillsStackedChart').getContext('2d');
+            const skillNames = role.skills.map(s => s.name);
+            const completeData = role.skills.map(s => Math.min(s.userCompetency, s.requiredCompetency));
+            const gapData = role.skills.map(s => Math.max(s.requiredCompetency - s.userCompetency, 0));
+
+            stackedChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: skillNames,
+                    datasets: [
+                        {
+                            label: 'Competency Met (0–7)',
+                            data: completeData,
+                            backgroundColor: '#0A66C2',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Competency Gap (0–7)',
+                            data: gapData,
+                            backgroundColor: '#00A0DC',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            min: 0,
+                            max: 7,
+                            ticks: { stepSize: 1 },
+                            title: { display: true, text: 'Competency (0–7)' }
+                        },
+                        y: {
+                            stacked: true,
+                            ticks: { font: { size: 11, weight: 'bold' } }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+                        tooltip: {
+                            callbacks: {
+                                title: function(items) {
+                                    const skill = roleData[currentRoleKey].skills[items[0].dataIndex];
+                                    return skill.name;
+                                },
+                                label: function(ctx) {
+                                    return `${ctx.dataset.label}: ${ctx.raw}/7`;
+                                },
+                                afterBody: function(items) {
+                                    const skill = roleData[currentRoleKey].skills[items[0].dataIndex];
+                                    return [
+                                        `Your competency: ${skill.userCompetency}/7`,
+                                        `Role requirement: ${skill.requiredCompetency}/7`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const clickedSkill = stackedChartInstance.data.labels[index];
+                            selectSkillFilter(clickedSkill);
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            const role = roleData[currentRoleKey];
+            if (pieChartInstance && stackedChartInstance) {
+                // Update Donut
+                pieChartInstance.data.datasets[0].data = [role.overallScore, 100 - role.overallScore];
+                pieChartInstance.update();
+
+                // Update Bar
+                stackedChartInstance.data.labels = role.skills.map(s => s.name);
+                stackedChartInstance.data.datasets[0].data = role.skills.map(s => Math.min(s.userCompetency, s.requiredCompetency));
+                stackedChartInstance.data.datasets[1].data = role.skills.map(s => Math.max(s.requiredCompetency - s.userCompetency, 0));
+                stackedChartInstance.update();
+            }
+        }
+
+        // ==========================================
+        // SKILL SELECTION & PILLS
+        // ==========================================
+        function renderSkillPills() {
+            const role = roleData[currentRoleKey];
+            const container = document.getElementById('skillPillsContainer');
+            
+            let html = `
+                <button onclick="selectSkillFilter('ALL')" class="px-2.5 py-1 text-xs rounded-full border transition-all ${selectedSkillKey === 'ALL' ? 'bg-linkedin-primary text-white border-linkedin-primary font-bold shadow-sm' : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'}">
+                    Show All (${role.skills.length})
+                </button>
+            `;
+
+            role.skills.forEach(s => {
+                const isSelected = selectedSkillKey === s.name;
+                html += `
+                    <button onclick="selectSkillFilter('${s.name}')" title="Your competency: ${s.userCompetency}/7; role requirement: ${s.requiredCompetency}/7" class="px-2.5 py-1 text-xs rounded-full border transition-all ${isSelected ? 'bg-linkedin-primary text-white border-linkedin-primary font-bold shadow-sm' : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-gray-100'}">
+                        ${s.name} <span class="${isSelected ? 'text-blue-100' : 'text-linkedin-primary'} font-extrabold ml-1">${s.userCompetency}/7</span>
+                    </button>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function selectSkillFilter(skillName) {
+            selectedSkillKey = skillName;
+            renderSkillPills();
+            renderRecommendations();
+
+            const badge = document.getElementById('selectedSkillBadge');
+            if (skillName === 'ALL') {
+                badge.innerText = "Showing: All Role Gaps";
+                badge.className = "bg-blue-100 text-linkedin-primary text-xs font-bold px-2.5 py-0.5 rounded-full";
+            } else {
+                badge.innerText = `Filtered: ${skillName}`;
+                badge.className = "bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full";
+            }
+        }
+
+        // ==========================================
+        // RECOMMENDATION CATEGORY TABS
+        // ==========================================
+        function setRecTab(category) {
+            activeRecCategory = category;
+            const tabs = ['ALL', 'LEARN', 'PRACTICE', 'CONNECT'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-rec-${t}`);
+                if (t === category) {
+                    btn.className = "px-3 py-1.5 text-xs font-bold rounded-md bg-white text-linkedin-primary shadow-sm transition-all";
+                } else {
+                    btn.className = "px-3 py-1.5 text-xs font-bold rounded-md text-gray-600 hover:text-linkedin-primary transition-all flex items-center gap-1";
+                }
+            });
+            renderRecommendations();
+        }
+
+        // ==========================================
+        // RECOMMENDATIONS RENDER ENGINE
+        // ==========================================
+        function renderRecommendations() {
+            const role = roleData[currentRoleKey];
+            const container = document.getElementById('recommendationsGrid');
+            
+            let allRecs = [];
+
+            // Gather items
+            if (role.recommendations) {
+                if (selectedSkillKey === 'ALL') {
+                    Object.keys(role.recommendations).forEach(skill => {
+                        allRecs = allRecs.concat(role.recommendations[skill].map(item => ({ ...item, relatedSkills: item.relatedSkills || [skill] })));
+                    });
+                } else if (role.recommendations[selectedSkillKey]) {
+                    allRecs = role.recommendations[selectedSkillKey].map(item => ({ ...item, relatedSkills: item.relatedSkills || [selectedSkillKey] }));
+                }
+            }
+
+            // Fallback default recommendations if empty
+            if (allRecs.length === 0) {
+                allRecs = [
+                    { category: "LEARN", title: "Targeted Skill Acceleration Course", provider: "LinkedIn Learning", badge: "Featured Partner", fee: "$29.99", duration: "3 Hours", gain: "+10% Skill Match" },
+                    { category: "PRACTICE", title: "Non-Profit CSR Leadership Project", provider: "LinkedIn CSR Network", badge: "CSR Opportunity", fee: "Free", duration: "4 hrs/wk", gain: "+15% Practical Experience" },
+                    { category: "CONNECT", title: "Industry Mentorship Networking Event", provider: "LinkedIn Events", badge: "Community Featured", fee: "Free for Premium", duration: "1 Hour", gain: "Peer Validation" }
+                ];
+            }
+
+            // Filter by active category tab
+            if (activeRecCategory !== 'ALL') {
+                allRecs = allRecs.filter(r => r.category === activeRecCategory);
+            }
+
+            if (allRecs.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-3 py-8 text-center text-gray-500 text-xs">
+                        <i class="fa-solid fa-folder-open text-2xl text-gray-300 mb-2"></i>
+                        <p>No featured opportunities match this specific category filter yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            allRecs.forEach(item => {
+                let catBadgeColor = "bg-blue-100 text-linkedin-primary";
+                let catIcon = "fa-graduation-cap";
+
+                if (item.category === "PRACTICE") {
+                    catBadgeColor = "bg-emerald-100 text-emerald-800";
+                    catIcon = "fa-hands-holding-child";
+                } else if (item.category === "CONNECT") {
+                    catBadgeColor = "bg-purple-100 text-purple-800";
+                    catIcon = "fa-users";
+                }
+
+                html += `
+                    <div class="border rounded-xl p-4 hover:border-linkedin-primary transition-all bg-white card-shadow flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${catBadgeColor} flex items-center gap-1">
+                                    <i class="fa-solid ${catIcon}"></i> ${item.category}
+                                </span>
+                                <span class="text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.2 rounded">
+                                    ${item.badge}
+                                </span>
+                            </div>
+
+                            <div class="flex flex-wrap gap-1 mb-2">
+                                ${(item.relatedSkills || (selectedSkillKey === 'ALL' ? role.skills.map(s => s.name) : [selectedSkillKey])).map(skill => `
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold bg-blue-50 text-linkedin-primary border border-blue-200 px-2 py-0.5 rounded-full">
+                                        <i class="fa-solid fa-tag" aria-hidden="true"></i> ${skill}
+                                    </span>
+                                `).join('')}
+                            </div>
+
+                            <h3 class="font-bold text-gray-900 text-sm leading-snug">${item.title}</h3>
+                            <p class="text-xs text-linkedin-primary font-semibold mt-0.5">${item.provider}</p>
+
+                            <div class="grid grid-cols-2 gap-1 my-2 pt-2 border-t text-[11px] text-gray-600">
+                                <div><i class="fa-solid fa-clock text-gray-400 mr-1"></i> ${item.duration}</div>
+                                <div><i class="fa-solid fa-chart-line text-emerald-600 mr-1"></i> ${item.gain}</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2 border-t">
+                            <span class="text-xs font-bold text-gray-800">${item.fee}</span>
+                            <button onclick="alert('Navigating to featured development partner: ${item.title}')" class="bg-linkedin-primary hover:bg-linkedin-hover text-white font-bold text-xs px-3 py-1.5 rounded-lg transition-all flex items-center gap-1">
+                                <span>Enroll / Connect</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ==========================================
+        // MODAL HANDLERS
+        // ==========================================
+        function openJobModal() {
+            document.getElementById('jobModal').classList.remove('hidden');
+        }
+
+        function closeJobModal() {
+            document.getElementById('jobModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
