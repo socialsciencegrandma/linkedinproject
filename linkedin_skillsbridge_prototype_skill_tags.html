@@ -49,6 +49,55 @@
             background-color: #CBD5E1;
             border-radius: 4px;
         }
+
+        /* Additional LinkedIn Jobs demo screen. */
+        #view-jobs { color:#191919; }
+        .jobs-toolbar { background:white; border:1px solid #e0e0e0; border-radius:10px 10px 0 0; padding:20px 24px; }
+        .jobs-topline { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; }
+        .jobs-brand { color:#0a66c2; font-size:22px; font-weight:700; display:flex; gap:10px; align-items:center; }
+        .jobs-demo { font-size:11px; font-weight:600; background:#f3f6f8; color:#666; padding:5px 10px; border-radius:4px; }
+        .jobs-search { display:flex; gap:10px; align-items:center; }
+        .jobs-search label { display:flex; align-items:center; gap:10px; background:#edf3f8; border:1px solid #bdc7ce; border-radius:5px; padding:10px 12px; flex:1; min-width:0; }
+        .jobs-search input { background:transparent; border:0; outline:none; min-width:0; width:100%; font-size:14px; }
+        .jobs-search label:focus-within { outline:2px solid #0a66c2; outline-offset:2px; }
+        .jobs-btn { border:1px solid #0a66c2; color:#0a66c2; background:white; border-radius:24px; padding:9px 18px; font-weight:600; font-size:14px; cursor:pointer; }
+        .jobs-btn:hover { background:#edf3f8; }
+        .jobs-btn.primary { background:#0a66c2; color:white; }
+        .jobs-btn.primary:hover { background:#004182; }
+        .jobs-context { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; font-size:12px; color:#666; }
+        .jobs-tag { display:inline-flex; align-items:center; gap:6px; border:1px solid #bbb; border-radius:20px; padding:5px 11px; color:#444; background:white; font-size:12px; }
+        .jobs-layout { display:grid; grid-template-columns:minmax(280px, 40%) minmax(0, 60%); background:white; border:1px solid #e0e0e0; border-top:0; border-radius:0 0 10px 10px; overflow:hidden; min-height:650px; }
+        .jobs-results { border-right:1px solid #e0e0e0; }
+        .jobs-results-heading { padding:20px; border-bottom:1px solid #e0e0e0; }
+        .jobs-results-heading h1 { font-size:20px; font-weight:700; line-height:1.3; }
+        .jobs-results-heading p { font-size:13px; color:#666; margin-top:7px; }
+        .jobs-listing { display:flex; gap:14px; text-align:left; width:100%; padding:20px; border-bottom:1px solid #e0e0e0; background:white; cursor:pointer; }
+        .jobs-listing:hover { background:#f3f6f8; }
+        .jobs-listing[aria-pressed="true"] { background:#edf3f8; box-shadow:inset 3px 0 #0a66c2; }
+        .jobs-listing:focus-visible, .jobs-btn:focus-visible { outline:2px solid #0a66c2; outline-offset:-3px; }
+        .jobs-company-logo { width:48px; height:48px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:17px; font-weight:750; }
+        .jobs-listing h2 { font-size:16px; font-weight:700; color:#0a66c2; line-height:1.35; margin-bottom:4px; }
+        .jobs-listing p { font-size:13px; line-height:1.7; }
+        .jobs-muted { color:#666; }
+        .jobs-detail { padding:28px 30px; min-width:0; }
+        .jobs-detail h2 { font-size:27px; font-weight:700; line-height:1.25; margin:18px 0 10px; }
+        .jobs-detail h3 { font-size:18px; font-weight:700; margin-bottom:10px; }
+        .jobs-detail p, .jobs-detail li { font-size:14px; line-height:1.7; }
+        .jobs-detail ul { list-style:disc; padding-left:20px; }
+        .jobs-info-card { border:1px solid #e0e0e0; border-radius:10px; padding:20px; margin-top:26px; }
+        .jobs-actions { display:flex; gap:10px; margin-top:22px; }
+        .jobs-feedback { font-size:13px; color:#057642; margin-top:12px; }
+        @media(max-width:700px) {
+            .jobs-toolbar { padding:16px; }
+            .jobs-topline { align-items:flex-start; flex-wrap:wrap; }
+            .jobs-search { flex-wrap:wrap; }
+            .jobs-search label { flex-basis:100%; }
+            .jobs-layout { grid-template-columns:1fr; }
+            .jobs-results { border-right:0; }
+            #jobsList { max-height:360px; overflow:auto; }
+            .jobs-detail { padding:22px 18px; border-top:1px solid #e0e0e0; }
+            .jobs-detail h2 { font-size:23px; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -305,19 +354,19 @@
             <!-- BOTTOM RIGHT FLOATING / FIXED CTA CARD MATCHING SKETCH -->
             <div class="fixed bottom-5 right-5 z-40 bg-white border-2 border-linkedin-primary rounded-xl p-4 shadow-2xl max-w-sm w-full transition-transform transform hover:-translate-y-1">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs uppercase font-extrabold text-emerald-600 flex items-center gap-1">
-                        <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> Auto-Match Ready
+                    <span id="jobsCtaStatus" class="text-xs uppercase font-extrabold text-emerald-600 flex items-center gap-1">
+                        <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> Jobs Ready
                     </span>
                     <button onclick="this.parentElement.parentElement.classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-xs">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
                 <h3 class="font-bold text-gray-900 text-sm mb-1">Ready for Jobs? (CTA)</h3>
-                <p class="text-xs text-gray-600 mb-3">Launch LinkedIn pre-filtered portal with automated skill-match score applied.</p>
+                <p id="jobsCtaDescription" class="text-xs text-gray-600 mb-3">Browse jobs for your target role on LinkedIn Jobs.</p>
                 
-                <button onclick="openJobModal()" class="w-full bg-linkedin-primary hover:bg-linkedin-hover text-white font-bold py-2.5 px-4 rounded-lg text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                <button id="jobsCta" onclick="handleJobsCta()" class="w-full bg-linkedin-primary hover:bg-linkedin-hover text-white font-bold py-2.5 px-4 rounded-lg text-sm shadow-md transition-all flex items-center justify-center gap-2">
                     <i class="fa-brands fa-linkedin text-lg"></i>
-                    <span>Apply with SkillsBridge Score</span>
+                    <span id="jobsCtaLabel">Apply For Jobs Now</span>
                     <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
             </div>
@@ -615,6 +664,28 @@
             </div>
         </div>
 
+        <!-- Additional standard Jobs flow for Premium OFF. All listings are fictional. -->
+        <section id="view-jobs" class="hidden" aria-label="LinkedIn Jobs search results">
+            <div class="jobs-toolbar">
+                <div class="jobs-topline">
+                    <div class="jobs-brand"><i class="fa-brands fa-linkedin" aria-hidden="true"></i> LinkedIn Jobs <span class="jobs-demo">Demo · Fictional postings</span></div>
+                    <button type="button" class="jobs-btn" onclick="switchView('dashboard')">← Back to SkillsBridge</button>
+                </div>
+                <form class="jobs-search" onsubmit="event.preventDefault(); searchMockJobs()" role="search">
+                    <label for="jobsSearchInput"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input id="jobsSearchInput" type="search" aria-label="Search job titles" placeholder="Search job titles" /></label>
+                    <button type="submit" class="jobs-btn primary">Search</button>
+                </form>
+                <div class="jobs-context"><span>Search results</span><span aria-hidden="true">·</span><span>All locations</span><span aria-hidden="true">·</span><span>Full-time</span></div>
+            </div>
+            <div class="jobs-layout">
+                <div class="jobs-results">
+                    <div class="jobs-results-heading"><h1 id="jobsResultsTitle"></h1><p id="jobsResultsCount" role="status" aria-live="polite"></p></div>
+                    <div id="jobsList" aria-label="Job listings"></div>
+                </div>
+                <article id="jobsDetail" class="jobs-detail" aria-label="Selected job details" aria-live="polite"></article>
+            </div>
+        </section>
+
     </main>
 
     <!-- SIMULATED LINKEDIN JOB PORTAL MODAL -->
@@ -639,7 +710,7 @@
             <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
                 <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-lg text-xs text-emerald-900 flex items-center justify-between">
                     <span><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <strong>SkillsBridge Match Enabled:</strong> Your candidate score profile is attached automatically to all 1-Click Easy Apply requests.</span>
-                    <span class="bg-emerald-600 text-white font-extrabold px-2 py-0.5 rounded text-[10px]">74% Score</span>
+                    <span id="modalScoreBadge" class="bg-emerald-600 text-white font-extrabold px-2 py-0.5 rounded text-[10px]">74% Score</span>
                 </div>
 
                 <!-- Job Listing Item 1 -->
@@ -789,6 +860,110 @@
             }
         };
 
+        // Normalize the uploaded role's percentage scores to the existing 0–7 scale.
+        roleData.lead_data_sci = {
+            title: 'Lead Data Analytics Director', salary: '$175,000 - $215,000',
+            demand: 'High (+24% YoY Growth)', psychFit: '89% Psychometric Match', onet: '15-2051.00',
+            overallScore: 76, acquiredCount: '4 / 5 Skills', remainingGap: '24% to Target',
+            skills: [
+                { name: 'Data Strategy & Governance', userCompetency: 5.25, requiredCompetency: 7 },
+                { name: 'Statistical Analysis', userCompetency: 6.3, requiredCompetency: 7 },
+                { name: 'Analytics Team Leadership', userCompetency: 4.9, requiredCompetency: 7 },
+                { name: 'Business Intelligence', userCompetency: 5.95, requiredCompetency: 7 },
+                { name: 'Executive Communication', userCompetency: 4.2, requiredCompetency: 7 }
+            ], recommendations: {}
+        };
+
+        // Fictional postings are keyed to the existing target role selector.
+        const mockJobCompanies = [
+            { company: 'LumenVale Labs', initials: 'LV', color: '#e9e4f8', ink: '#6145a5', location: 'San Francisco, CA', mode: 'Hybrid', posted: '2 hours ago', applicants: '8 applicants', focus: 'enterprise platforms' },
+            { company: 'CedarArc Digital', initials: 'CA', color: '#e0f0eb', ink: '#25715c', location: 'Remote', mode: 'Remote', posted: '1 day ago', applicants: '19 applicants', focus: 'customer experience' },
+            { company: 'NorthQuay Systems', initials: 'NQ', color: '#e1ecf8', ink: '#245b91', location: 'New York, NY', mode: 'Hybrid', posted: '3 days ago', applicants: '27 applicants', focus: 'business operations' },
+            { company: 'Morrowfield Technologies', initials: 'MT', color: '#fff0da', ink: '#986317', location: 'Austin, TX', mode: 'On-site', posted: '5 days ago', applicants: '34 applicants', focus: 'digital services' }
+        ];
+        const mockRoleSummaries = {
+            principal_pm: 'Lead the strategy and delivery of AI products, working with engineering, design, and data teams to turn customer needs into useful enterprise experiences.',
+            solutions_arch: 'Design enterprise solutions that connect cloud infrastructure, applications, and data. Guide technical decisions with customers and delivery teams.',
+            vp_growth: 'Own the growth marketing strategy across acquisition, activation, and retention. Build a team that uses experiments and customer insight to drive sustainable growth.',
+            lead_data_sci: 'Lead the analytics function and translate complex data into business decisions. Develop the team, reporting standards, and data strategy across the organization.'
+        };
+        const mockJobs = Object.entries(roleData).flatMap(([roleKey, role]) => mockJobCompanies.map((company, index) => ({
+            ...company, id: roleKey + '-' + index, roleKey,
+            title: role.title + (index === 1 ? ' — ' + (roleKey === 'principal_pm' ? 'AI Platforms' : roleKey === 'solutions_arch' ? 'Cloud Platforms' : roleKey === 'vp_growth' ? 'Customer Acquisition' : 'Business Intelligence') : index === 2 ? ' — Enterprise' : ''),
+            salary: role.salary + ' / year', summary: mockRoleSummaries[roleKey],
+            skills: role.skills.slice(0, 3).map(skill => skill.name)
+        })));
+        let visibleMockJobs = [];
+        let selectedMockJobId = null;
+        const savedMockJobs = new Set();
+
+        function escapeJobsText(value) {
+            return String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
+        }
+
+        function handleJobsCta() {
+            if (isPremium) {
+                openJobModal();
+            } else {
+                openMockJobs();
+            }
+        }
+
+        function openMockJobs() {
+            const roleKey = document.getElementById('goalJobSelect').value;
+            document.getElementById('jobsSearchInput').value = roleData[roleKey].title;
+            searchMockJobs(); // Submit the target-role search before showing its results.
+            switchView('jobs');
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        function searchMockJobs() {
+            const query = document.getElementById('jobsSearchInput').value.trim();
+            const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+            visibleMockJobs = mockJobs.filter(job => words.every(word => job.title.toLowerCase().includes(word)));
+            document.getElementById('jobsResultsTitle').textContent = query || 'All jobs';
+            document.getElementById('jobsResultsCount').textContent = visibleMockJobs.length + ' results · Fictional job postings';
+            selectMockJob(visibleMockJobs.length ? visibleMockJobs[0].id : null);
+        }
+
+        function selectMockJob(id) {
+            selectedMockJobId = id;
+            document.getElementById('jobsList').innerHTML = visibleMockJobs.map(job => `
+                <button type="button" class="jobs-listing" aria-pressed="${job.id === id}" onclick="selectMockJob('${job.id}')">
+                    <span class="jobs-company-logo" style="background:${job.color};color:${job.ink}" aria-hidden="true">${job.initials}</span>
+                    <span><h2>${escapeJobsText(job.title)}</h2><p>${job.company}</p><p class="jobs-muted">${job.location} (${job.mode})</p><p class="jobs-muted" style="font-size:12px;margin-top:8px"><span style="color:#057642">${job.posted}</span> · Easy Apply</p></span>
+                </button>`).join('') || '<p style="padding:24px;color:#666">No jobs found. Try another job title.</p>';
+            const job = mockJobs.find(item => item.id === id);
+            const detail = document.getElementById('jobsDetail');
+            if (!job) {
+                detail.innerHTML = '<h2>No matching jobs</h2><p>Search for a target role such as Enterprise Solutions Architect or VP of Growth Marketing.</p>';
+                return;
+            }
+            detail.innerHTML = `
+                <div style="display:flex;gap:12px;align-items:center"><span class="jobs-company-logo" style="background:${job.color};color:${job.ink}" aria-hidden="true">${job.initials}</span><strong>${job.company}</strong></div>
+                <h2>${escapeJobsText(job.title)}</h2>
+                <p class="jobs-muted">${job.location} · ${job.posted} · ${job.applicants}</p>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px"><span class="jobs-tag">✓ ${job.mode}</span><span class="jobs-tag">✓ Full-time</span><span class="jobs-tag">${job.salary}</span></div>
+                <div class="jobs-actions"><button type="button" class="jobs-btn primary" onclick="previewMockApplication()"><i class="fa-brands fa-linkedin" aria-hidden="true"></i> Easy Apply</button><button id="mockSaveButton" type="button" class="jobs-btn" aria-pressed="${savedMockJobs.has(id)}" onclick="toggleMockJobSave()">${savedMockJobs.has(id) ? 'Saved' : 'Save'}</button></div>
+                <div id="mockJobFeedback" class="jobs-feedback" role="status"></div>
+                <div class="jobs-info-card"><h3>About the job</h3><p>${job.summary}</p><p style="margin-top:12px">At ${job.company}, you will help shape ${job.focus}, collaborate across teams, and bring clear priorities to complex work.</p>
+                <h3 style="margin-top:22px">What you’ll bring</h3><ul>${job.skills.map(skill => '<li>Experience in ' + escapeJobsText(skill) + '.</li>').join('')}<li>A collaborative approach and clear communication with stakeholders.</li></ul></div>
+                <p class="jobs-muted" style="font-size:12px;margin-top:22px">This is a fictional posting for the SkillsBridge prototype.</p>`;
+        }
+
+        function toggleMockJobSave() {
+            const saved = savedMockJobs.has(selectedMockJobId);
+            if (saved) savedMockJobs.delete(selectedMockJobId);
+            else savedMockJobs.add(selectedMockJobId);
+            document.getElementById('mockSaveButton').textContent = saved ? 'Save' : 'Saved';
+            document.getElementById('mockSaveButton').setAttribute('aria-pressed', String(!saved));
+            document.getElementById('mockJobFeedback').textContent = saved ? 'Removed from saved jobs.' : 'Saved in this demo session.';
+        }
+
+        function previewMockApplication() {
+            document.getElementById('mockJobFeedback').textContent = 'Demo application preview — no application has been submitted.';
+        }
+
         // ==========================================
         // STATE MANAGEMENT
         // ==========================================
@@ -804,6 +979,7 @@
         // INITIALIZATION
         // ==========================================
         window.onload = function() {
+            togglePremium();
             renderDashboardCharts();
             renderSkillPills();
             renderRecommendations();
@@ -813,7 +989,7 @@
         // VIEW NAVIGATION SWITCHER
         // ==========================================
         function switchView(viewName) {
-            const allViews = ['dashboard', 'matcher', 'recruiter', 'dimensional'];
+            const allViews = ['dashboard', 'matcher', 'recruiter', 'dimensional', 'jobs'];
             
             allViews.forEach(v => {
                 const element = document.getElementById(`view-${v}`);
@@ -858,6 +1034,11 @@
             } else {
                 matcherBadge.classList.add('hidden');
             }
+            document.getElementById('jobsCtaLabel').textContent = isPremium ? 'AUTO-MATCH' : 'Apply For Jobs Now';
+            document.getElementById('jobsCtaStatus').innerHTML = '<i class="fa-solid fa-circle text-[8px] animate-pulse"></i> ' + (isPremium ? 'Auto-Match Ready' : 'Jobs Ready');
+            document.getElementById('jobsCtaDescription').textContent = isPremium
+                ? 'Launch LinkedIn pre-filtered portal with automated skill-match score applied.'
+                : 'Browse jobs for your target role on LinkedIn Jobs.';
             renderRecommendations(); // re-render to update premium perks
         }
 
@@ -877,14 +1058,11 @@
             document.getElementById('acquiredCount').innerText = role.acquiredCount;
             document.getElementById('remainingPercent').innerText = role.remainingGap;
             document.getElementById('modalJobTitleTag').innerText = role.title;
+            document.getElementById('modalScoreBadge').innerText = `${role.overallScore}% Score`;
 
-            // Reset skill selector
-            selectedSkillKey = 'ALL';
-
-            // Re-render charts and panels
+            // Re-render charts and reset the skill filter and its visible badge.
             updateCharts();
-            renderSkillPills();
-            renderRecommendations();
+            selectSkillFilter('ALL');
         }
 
         // ==========================================
